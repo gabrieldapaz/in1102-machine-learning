@@ -20,7 +20,6 @@ Example:
 from collections import Counter
 import random
 import numpy as np
-from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import (
     classification_report,
@@ -49,8 +48,9 @@ class ClassifierTrainer:
     - train_classifiers_with_random_states: Train classifiers with random states for multiple iterations and calculate confidence intervals for evaluation metrics.
     """
 
-    def __init__(self, datasets, model_class, param_grid):
+    def __init__(self, datasets, scaler, model_class, param_grid):
         self.datasets = datasets
+        self.scaler = scaler
         self.model_class = model_class
         self.param_grid = param_grid
         self.classifiers = []
@@ -70,7 +70,7 @@ class ClassifierTrainer:
         Pipeline: A scikit-learn pipeline containing a scaler and a logistic regression classifier.
         """
         return Pipeline(
-            [("scaler", StandardScaler()), ("clf", self.model_class)]
+            [("scaler", self.scaler), ("clf", self.model_class)]
         )
 
     def find_best_model(self, X_train, y_train, pipeline, param_grid):
